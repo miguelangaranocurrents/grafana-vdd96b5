@@ -144,7 +144,9 @@ export const dateTimeForTimeZone = (
   input?: DateTimeInput,
   formatInput?: FormatInput
 ): DateTime => {
-  if (timezone && timezone !== 'browser') {
+  // Non-zone values such as 'default' (and unknown zone names) fall back to the local time zone,
+  // otherwise the Luxon implementation would produce an invalid date.
+  if (timezone && timezone !== 'browser' && moment.tz.zone(timezone)) {
     if (typeof input === 'string' && formatInput) {
       return asDateTime(moment.tz(input, formatInput, timezone));
     }
